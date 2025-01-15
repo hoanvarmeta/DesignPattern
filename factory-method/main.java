@@ -1,5 +1,7 @@
 
 interface Payment {
+    int limit = 1000;
+
     void pay();
 }
 
@@ -16,18 +18,23 @@ class CreditCard implements Payment {
 }
 
 class Paypal implements Payment {
-    String id_paypal;
+    String username;
 
-    Paypal(String id_paypal) {
-        this.id_paypal = id_paypal;
+    Paypal(String username) {
+        this.username = username;
     }
 
     public void pay() {
-        System.out.println("Pay with paypal, id: " + this.id_paypal);
+        System.out.println("Pay with paypal, id: " + this.username);
     }
 }
 
 abstract class PaymentCreator {
+    public void getPayment(String paymentType) {
+        Payment payment = this.choosePayment(paymentType);
+        System.out.println("limit: " + payment.limit);
+    }
+
     public abstract Payment choosePayment(String paymentType);
 }
 
@@ -44,7 +51,9 @@ class PaymentOnlineCreator extends PaymentCreator {
 
 public class main {
     public static void main(String[] args) {
-        Payment paymentOn = new PaymentOnlineCreator().choosePayment("CreditCard");
+        PaymentCreator paymentOnlineCreator = new PaymentOnlineCreator();
+        Payment paymentOn = paymentOnlineCreator.choosePayment("CreditCard");
+        paymentOnlineCreator.getPayment("CreditCard");
         paymentOn.pay();
     }
 }
