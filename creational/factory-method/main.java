@@ -2,48 +2,56 @@
 interface Payment {
     int limit = 1000;
 
-    void pay();
+    void pay(int amount);
 }
 
 class CreditCard implements Payment {
-    String ccv;
+    String id;
+    int balance;
 
-    CreditCard(String ccv) {
-        this.ccv = ccv;
+    CreditCard(String id, int balance) {
+        this.id = id;
+        this.balance = balance;
     }
 
-    public void pay() {
-        System.out.println("Pay with credit card,  ccv: " + this.ccv);
+    public void pay(int amount) {
+        if (this.balance < amount) {
+            System.out.println("Balance not enough");
+        }
+        this.balance -= amount;
+        System.out.println("Pay with credit card,  id: " + this.id + ", amount: " + amount);
     }
 }
 
 class Paypal implements Payment {
-    String username;
+    String id;
+    int balance;
 
-    Paypal(String username) {
-        this.username = username;
+    Paypal(String id, int balance) {
+        this.balance = balance;
+        this.id = id;
     }
 
-    public void pay() {
-        System.out.println("Pay with paypal, id: " + this.username);
+    public void pay(int amount) {
+        if (this.balance < amount) {
+            System.out.println("Balance not enough");
+        }
+        this.balance -= amount;
+        System.out.println("Pay with paypal, id: " + this.id + ", amount: " + amount);
     }
 }
 
 abstract class PaymentCreator {
-    public void getPayment(String paymentType) {
-        Payment payment = this.choosePayment(paymentType);
-        System.out.println("limit: " + payment.limit);
-    }
 
-    public abstract Payment choosePayment(String paymentType);
+    public abstract Payment choosePayment(String paymentType, String id, int balance);
 }
 
 class PaymentOnlineCreator extends PaymentCreator {
-    public Payment choosePayment(String paymentType) {
+    public Payment choosePayment(String paymentType, String id, int balance) {
         if (paymentType == "CreditCard") {
-            return new CreditCard("123");
+            return new CreditCard(id, balance);
         } else if (paymentType == "Paypal") {
-            return new Paypal("234");
+            return new Paypal(id, balance);
         }
         return null;
     }
@@ -52,8 +60,7 @@ class PaymentOnlineCreator extends PaymentCreator {
 public class main {
     public static void main(String[] args) {
         PaymentCreator paymentOnlineCreator = new PaymentOnlineCreator();
-        Payment paymentOn = paymentOnlineCreator.choosePayment("CreditCard");
-        paymentOnlineCreator.getPayment("CreditCard");
-        paymentOn.pay();
+        Payment paymentOn = paymentOnlineCreator.choosePayment("CreditCard", "123", 1000);
+        paymentOn.pay(200);
     }
 }
