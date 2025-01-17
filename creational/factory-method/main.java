@@ -1,57 +1,101 @@
+import java.util.ArrayList;
 
 interface Payment {
-    int limit = 1000;
+    void deposit(int id, int amount);
 
-    void pay(int amount);
+    void pay(int id, int amount);
 }
 
-class CreditCard implements Payment {
-    String id;
+class DB {
+    public static ArrayList<CreditCard> creditCards = new ArrayList<CreditCard>();
+    public static ArrayList<Paypal> payPals = new ArrayList<Paypal>();
+
+}
+
+class CreditCard {
+    static int current = 0;
+    int id;
     int balance;
 
-    CreditCard(String id, int balance) {
-        this.id = id;
-        this.balance = balance;
-    }
-
-    public void pay(int amount) {
-        if (this.balance < amount) {
-            System.out.println("Balance not enough");
-        }
-        this.balance -= amount;
-        System.out.println("Pay with credit card,  id: " + this.id + ", amount: " + amount);
+    CreditCard() {
+        this.id = ++this.current;
+        this.balance = 0;
     }
 }
 
-class Paypal implements Payment {
-    String id;
-    int balance;
+class CreditCardPayment implements Payment {
 
-    Paypal(String id, int balance) {
-        this.balance = balance;
-        this.id = id;
+    public void deposit(int id, int amount) {
+        for (CreditCard creditCard : DB.creditCards) {
+            if (creditCard.id == id) {
+                creditCard.balance += amount;
+                System.out.println("Deposit with credit card, id: " + creditCard.id + ", amount: " + amount);
+                return;
+            }
+        }
+        System.out.println("Not found");
     }
 
-    public void pay(int amount) {
-        if (this.balance < amount) {
-            System.out.println("Balance not enough");
+    public void pay(int id, int amount) {
+        for (CreditCard creditCard : DB.creditCards) {
+            if (creditCard.id == id) {
+                creditCard.balance -= amount;
+                System.out.println("Pay with credit card,  id: " + creditCard.id + ", amount: " + amount);
+                return;
+            }
+
         }
-        this.balance -= amount;
-        System.out.println("Pay with paypal, id: " + this.id + ", amount: " + amount);
+        System.out.println("Not found");
+    }
+}
+
+class Paypal {
+    static int current = 0;
+    int id;
+    int balance;
+
+    Paypal() {
+        this.id = ++this.current;
+        this.balance = 0;
+    }
+}
+
+class PaypalPayment implements Payment {
+
+    public void deposit(int id, int amount) {
+        for (Paypal paypal : DB.payPals) {
+            if (paypal.id == id) {
+                paypal.balance += amount;
+                System.out.println("Deposit with paypal, id: " + paypal.id + ", amount: " + amount);
+                return;
+            }
+        }
+        System.out.println("Not found");
+    }
+
+    public void pay(int id, int amount) {
+        for (Paypal paypal : DB.payPals) {
+            if (paypal.id == id) {
+                paypal.balance -= amount;
+                System.out.println("Pay with paypal,  id: " + paypal.id + ", amount: " + amount);
+                return;
+            }
+
+        }
+        System.out.println("Not found");
     }
 }
 
 abstract class PaymentCreator {
-
-    public abstract Payment choosePayment(String paymentType, String id, int balance);
+    public abstract Payment choosePayment(String paymentType);
 }
 
 class PaymentOnlineCreator extends PaymentCreator {
-    public Payment choosePayment(String paymentType, String id, int balance) {
+    public Payment choosePayment(String paymentType) {
         if (paymentType == "CreditCard") {
-            return new CreditCard(id, balance);
+            return new CreditCardPayment();
         } else if (paymentType == "Paypal") {
-            return new Paypal(id, balance);
+            return new PaypalPayment();
         }
         return null;
     }
@@ -59,8 +103,11 @@ class PaymentOnlineCreator extends PaymentCreator {
 
 public class main {
     public static void main(String[] args) {
+        DB.payPals.add(new Paypal());
+        DB.creditCards.add(new CreditCard());
         PaymentCreator paymentOnlineCreator = new PaymentOnlineCreator();
-        Payment paymentOn = paymentOnlineCreator.choosePayment("CreditCard", "123", 1000);
-        paymentOn.pay(200);
+        Payment paymentOn = paymentOnlineCreator.choosePayment("CreditCard");
+        paymentOn.deposit(1, 200);
+        paymentOn.pay(1, 200);
     }
 }

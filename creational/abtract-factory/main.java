@@ -1,149 +1,196 @@
-abstract class Paypal {
-    int id;
-    int balance;
+import java.util.ArrayList;
 
-    public abstract void whoiam();
-
-    public abstract void pay(int amount);
-
-    public void print() {
-        System.out.println("balance: " + this.balance);
-    }
+class DB {
+    public static ArrayList<CreditCard> creditCards = new ArrayList<CreditCard>();
+    public static ArrayList<Paypal> payPals = new ArrayList<Paypal>();
 }
 
-abstract class CreditCard {
-    int id;
-    int balance;
-
-    public abstract void whoiam();
-
-    public abstract void pay(int amount);
-
-    public void print() {
-        System.out.println("balance: " + this.balance);
-    }
-}
-
-class PaypalOnline extends Paypal {
+class CreditCard {
     static int current = 0;
+    int id;
+    int balance;
+
+    CreditCard() {
+        this.id = ++this.current;
+        this.balance = 0;
+    }
+}
+
+class Paypal {
+    static int current = 0;
+    int id;
+    int balance;
+
+    Paypal() {
+        this.id = ++this.current;
+        this.balance = 0;
+    }
+}
+
+abstract class CreditCardPayment {
+    abstract void deposit(int id, int amount);
+
+    abstract void pay(int id, int amount);
+}
+
+abstract class PaypalPayment {
+    abstract void deposit(int id, int amount);
+
+    abstract void pay(int id, int amount);
+}
+
+class PaypalOnline extends PaypalPayment {
 
     public void whoiam() {
         System.out.println("Paypal Online");
     }
 
-    PaypalOnline(int balance) {
-        this.id = ++current;
-        this.balance = balance;
+    public void deposit(int id, int amount) {
+        for (Paypal paypal : DB.payPals) {
+            if (paypal.id == id) {
+                paypal.balance += amount;
+                System.out.println("Deposit with paypal Online, id: " + paypal.id + ", amount: " + amount);
+                return;
+            }
+        }
+        System.out.println("Not found");
     }
 
-    public void pay(int amount) {
-        if (this.balance < amount) {
-            System.out.println("Balance not enough");
-        } else {
-            this.balance -= amount;
-            System.out.println("Pay with Paypal Online with amount: " + amount);
+    public void pay(int id, int amount) {
+        for (Paypal paypal : DB.payPals) {
+            if (paypal.id == id) {
+                paypal.balance -= amount;
+                System.out.println("Pay with paypal Online,  id: " + paypal.id + ", amount: " + amount);
+                return;
+            }
+
         }
+        System.out.println("Not found");
     }
 }
 
-class PaypalOffline extends Paypal {
-    static int current = 0;
+class PaypalOffline extends PaypalPayment {
 
     public void whoiam() {
         System.out.println("Paypal Offline");
     }
 
-    PaypalOffline(int balance) {
-        this.id = ++current;
-        this.balance = balance;
+    public void deposit(int id, int amount) {
+        for (Paypal paypal : DB.payPals) {
+            if (paypal.id == id) {
+                paypal.balance += amount;
+                System.out.println("Deposit with paypal Offline, id: " + paypal.id + ", amount: " + amount);
+                return;
+            }
+        }
+        System.out.println("Not found");
     }
 
-    public void pay(int amount) {
-        if (this.balance < amount) {
-            System.out.println("Balance not enough");
-        } else {
-            this.balance -= amount;
-            System.out.println("Pay with Paypal Offline with amount: " + amount);
-        }
+    public void pay(int id, int amount) {
+        for (Paypal paypal : DB.payPals) {
+            if (paypal.id == id) {
+                paypal.balance -= amount;
+                System.out.println("Pay with paypal Offline,  id: " + paypal.id + ", amount: " + amount);
+                return;
+            }
 
+        }
+        System.out.println("Not found");
     }
 }
 
-class CreditCardOnline extends CreditCard {
-    static int current = 0;
-
-    CreditCardOnline(int balance) {
-        this.id = ++current;
-        this.balance = balance;
-    }
+class CreditCardOnline extends CreditCardPayment {
 
     public void whoiam() {
         System.out.println("CreditCard Online");
     }
 
-    public void pay(int amount) {
-        if (this.balance < amount) {
-            System.out.println("Balance not enough");
-        } else {
-            this.balance -= amount;
-            System.out.println("Pay with CreditCard Offline with amount: " + amount);
+    public void deposit(int id, int amount) {
+        for (CreditCard creditCard : DB.creditCards) {
+            if (creditCard.id == id) {
+                creditCard.balance += amount;
+                System.out.println("Deposit with credit card Online, id: " + creditCard.id + ", amount: " + amount);
+                return;
+            }
         }
+        System.out.println("Not found");
+    }
 
+    public void pay(int id, int amount) {
+        for (CreditCard creditCard : DB.creditCards) {
+            if (creditCard.id == id) {
+                creditCard.balance -= amount;
+                System.out.println("Pay with credit card Online,  id: " + creditCard.id + ", amount: " + amount);
+                return;
+            }
+
+        }
+        System.out.println("Not found");
     }
 }
 
-class CreditCardOffline extends CreditCard {
-    static int current = 0;
-
-    CreditCardOffline(int balance) {
-        this.id = ++current;
-        this.balance = balance;
-    }
+class CreditCardOffline extends CreditCardPayment {
 
     public void whoiam() {
         System.out.println("CreditCard Offline");
     }
 
-    public void pay(int amount) {
-        if (this.balance < amount) {
-            System.out.println("Balance not enough");
-        } else {
-            this.balance -= amount;
-            System.out.println("Pay with CreditCard Offline with amount: " + amount);
+    public void deposit(int id, int amount) {
+        for (CreditCard creditCard : DB.creditCards) {
+            if (creditCard.id == id) {
+                creditCard.balance += amount;
+                System.out.println("Deposit with credit card Offline, id: " + creditCard.id + ", amount: " + amount);
+                return;
+            }
         }
+        System.out.println("Not found");
+    }
+
+    public void pay(int id, int amount) {
+        for (CreditCard creditCard : DB.creditCards) {
+            if (creditCard.id == id) {
+                creditCard.balance -= amount;
+                System.out.println("Pay with credit card Offline,  id: " + creditCard.id + ", amount: " + amount);
+                return;
+            }
+
+        }
+        System.out.println("Not found");
     }
 }
 
 interface PaymentFactory {
-    Paypal choosePaypal(int balance);
+    PaypalPayment choosePaypal();
 
-    CreditCard chooseCreditCard(int balance);
+    CreditCardPayment chooseCreditCard();
 }
 
 class PaymentOnlineFactory implements PaymentFactory {
-    public Paypal choosePaypal(int balance) {
-        return new PaypalOnline(balance);
+    public PaypalPayment choosePaypal() {
+        return new PaypalOnline();
     }
 
-    public CreditCard chooseCreditCard(int balance) {
-        return new CreditCardOnline(balance);
+    public CreditCardPayment chooseCreditCard() {
+        return new CreditCardOnline();
     }
 }
 
 class PaymentOfflineFactory implements PaymentFactory {
-    public Paypal choosePaypal(int balance) {
-        return new PaypalOffline(balance);
+    public PaypalPayment choosePaypal() {
+        return new PaypalOffline();
     }
 
-    public CreditCard chooseCreditCard(int balance) {
-        return new CreditCardOffline(balance);
+    public CreditCardPayment chooseCreditCard() {
+        return new CreditCardOffline();
     }
 }
 
 public class main {
     public static void main(String[] args) {
         PaymentFactory paymentOfflineFactory = new PaymentOfflineFactory();
-        CreditCard creditCard = paymentOfflineFactory.chooseCreditCard(2000);
-        creditCard.pay(1100);
+        CreditCardPayment creditCard = paymentOfflineFactory.chooseCreditCard();
+        DB.creditCards.add(new CreditCard());
+        creditCard.deposit(1, 1000);
+        creditCard.pay(1, 100);
     }
 }

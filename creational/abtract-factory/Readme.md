@@ -1,5 +1,5 @@
 1. Abstract Factory là gì ?
-    - Factory method là một mẫu thiết kế (Design Pattern) thuộc nhóm Creational Design Patterns, phép bạn tạo ra các nhóm đối tượng liên quan mà không cần chỉ định các lớp cụ thể của chúng
+    - Factory method là một mẫu thiết kế (Design Pattern) thuộc nhóm Creational Design Patterns, cho phép bạn tạo ra các nhóm đối tượng liên quan mà không cần chỉ định các lớp cụ thể của chúng
 
 2. Tại sao lại dùng Abstract Factory ?
     - Đảm bảo tính nhất quán ,khi gọi tạo class từ một factory sẽ cùng họ, đảm bảo chúng được sử dụng cùng ngữ cảnh
